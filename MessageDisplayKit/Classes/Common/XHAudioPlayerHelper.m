@@ -37,6 +37,7 @@
     if (_player && _player.isPlaying) {
         [_player stop];
     }
+    [[AVAudioSession sharedInstance] setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
     [[UIDevice currentDevice] setProximityMonitoringEnabled:NO];
     if ([self.delegate respondsToSelector:@selector(didAudioPlayerStopPlay:)]) {
         [self.delegate didAudioPlayerStopPlay:_player];
@@ -180,11 +181,13 @@
         //黑屏
         DLog(@"Device is close to user");
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+        [[AVAudioSession sharedInstance] setActive:YES withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
         
     } else {
         //没黑屏幕
         DLog(@"Device is not close to user");
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+        [[AVAudioSession sharedInstance] setActive:YES withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
         if (!_player || !_player.isPlaying) {
             //没有播放了，也没有在黑屏状态下，就可以把距离传感器关了
             [[UIDevice currentDevice] setProximityMonitoringEnabled:NO];

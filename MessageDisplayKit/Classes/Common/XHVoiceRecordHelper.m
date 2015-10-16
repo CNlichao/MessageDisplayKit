@@ -90,6 +90,7 @@
 
 - (void)stopRecord {
     [self cancelRecording];
+    [[AVAudioSession sharedInstance] setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
     [self resetTimer];
 }
 
@@ -107,7 +108,7 @@
         }
         
         error = nil;
-        [audioSession setActive:YES error:&error];
+        [audioSession setActive:YES withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:&error];
         if(error) {
             DLog(@"audioSession: %@ %ld %@", [error domain], (long)[error code], [[error userInfo] description]);
             return;
