@@ -90,7 +90,23 @@
 // 计算图片实际大小
 + (CGSize)neededSizeForPhoto:(UIImage *)photo {
     // 这里需要缩放后的size
-    CGSize photoSize = CGSizeMake(140, 140);
+    if (photo == nil) {
+        return CGSizeMake(140, 140);
+    }
+    // 这里需要缩放后的size
+    CGSize photoSize ;
+    
+    CGFloat photoWidth = photo.size.width;
+    CGFloat photoHeight = photo.size.height;
+    
+    CGFloat scalWidth = photoWidth / 140;
+    CGFloat scalHeight = photoHeight / 140;
+    
+    if (scalWidth > scalHeight) {
+        photoSize = CGSizeMake(photoWidth / scalWidth, photoHeight / scalWidth);
+    } else {
+        photoSize = CGSizeMake(photoWidth / scalHeight, photoHeight / scalHeight);
+    }
     return photoSize;
 }
 
