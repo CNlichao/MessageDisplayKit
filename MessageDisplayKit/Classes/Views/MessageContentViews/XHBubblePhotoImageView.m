@@ -72,8 +72,7 @@
                 // if image not nil
                 if (image) {
                     // scale image
-                    //避免多次缩放，图片变形
-                    //image = [image thumbnailImage:CGRectGetWidth(weakSelf.bounds) * 2 transparentBorder:0 cornerRadius:0 interpolationQuality:1.0];
+                    image = [image thumbnailImage:CGRectGetWidth(weakSelf.bounds) * 2 transparentBorder:0 cornerRadius:0 interpolationQuality:1.0];
                     dispatch_async(dispatch_get_main_queue(), ^{
                         // if image not nil
                         if (image) {
