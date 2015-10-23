@@ -10,7 +10,7 @@
 #import "XHMessageBubbleFactory.h"
 
 #define kXHBubblePhotoMargin 8.0f // 上下左右的边距
-
+#define kXHMaxBubblePhotoWidth 280.0f//最大图片宽度
 @interface XHBubblePhotoImageView : UIView
 
 /**

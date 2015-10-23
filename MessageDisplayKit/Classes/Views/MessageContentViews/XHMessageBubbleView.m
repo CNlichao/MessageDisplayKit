@@ -511,6 +511,10 @@
         case XHBubbleMessageMediaTypeVideo:
         case XHBubbleMessageMediaTypeLocalPosition: {
             CGSize needPhotoSize = [XHMessageBubbleView neededSizeForPhoto:self.message.photo];
+            if (!CGSizeEqualToSize(_sizeForBubblePhotoImageView,CGSizeZero)) {
+                needPhotoSize = _sizeForBubblePhotoImageView;
+            }
+
             CGFloat paddingX = 0.0f;
             if (self.message.bubbleMessageType == XHBubbleMessageTypeSending) {
                 paddingX = CGRectGetWidth(self.bounds) - needPhotoSize.width;
