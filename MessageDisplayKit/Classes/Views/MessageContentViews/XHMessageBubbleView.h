@@ -89,6 +89,11 @@
 @property (nonatomic, strong) UIFont *font UI_APPEARANCE_SELECTOR;
 
 /**
+ *  图片实际显示尺寸
+ */
+@property (nonatomic,assign) CGSize sizeForBubblePhotoImageView;
+
+/**
  *  初始化消息内容显示控件的方法
  *
  *  @param frame   目标Frame

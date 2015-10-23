@@ -13,6 +13,7 @@
 
 #import "XHConfigurationHelper.h"
 #import "XHMacro.h"
+#import "XHMessageBubbleView.h"
 
 @interface XHBubblePhotoImageView ()
 
@@ -46,8 +47,10 @@
 
 - (void)configureMessagePhoto:(UIImage *)messagePhoto thumbnailUrl:(NSString *)thumbnailUrl originPhotoUrl:(NSString *)originPhotoUrl onBubbleMessageType:(XHBubbleMessageType)bubbleMessageType {
     self.bubbleMessageType = bubbleMessageType;
-    self.messagePhoto = messagePhoto;
     
+    if (messagePhoto) {
+        [self updateBubbleViewWithImage:messagePhoto];
+    }
     if (thumbnailUrl) {
         WEAKSELF
         [self addSubview:self.activityIndicatorView];
@@ -68,23 +71,60 @@
                         weakSelf.semaphore = nil;
                     }
                 }
-                
                 // if image not nil
                 if (image) {
-                    // scale image
-                    image = [image thumbnailImage:CGRectGetWidth(weakSelf.bounds) * 2 transparentBorder:0 cornerRadius:0 interpolationQuality:1.0];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        // if image not nil
-                        if (image) {
-                            // show image
-                            weakSelf.messagePhoto = image;
-                            [weakSelf.activityIndicatorView stopAnimating];
-                        }
-                    });
+                    [weakSelf updateBubbleViewWithImage:image];
                 }
+                
             }
         }];
     }
+}
+
+/**
+ * 根据图片更新BubbleView(主要设置图片大小尺寸)
+ */
+- (void)updateBubbleViewWithImage:(UIImage *)image {
+    
+    // scale image
+    CGSize size = [self needSizeForImage:image];
+    image = [image resizedImage:size interpolationQuality:1.0];
+   //图片太宽进行剪切，以免图片变形（截取中间的进行显示）
+    if (size.width > kXHMaxBubblePhotoWidth) {
+        image = [image croppedImage:CGRectMake((size.width - kXHMaxBubblePhotoWidth)/2, 0, kXHMaxBubblePhotoWidth, size.height)];
+        size = CGSizeMake(kXHMaxBubblePhotoWidth, size.height);
+    }
+   
+    WEAKSELF
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // if image not nil
+        if (image) {
+            UIView *view = weakSelf.superview;
+            if ([view isKindOfClass:[XHMessageBubbleView class]]) {
+                XHMessageBubbleView * bubble = (XHMessageBubbleView *)view;
+
+                bubble.sizeForBubblePhotoImageView = size;
+                [bubble layoutSubviews];
+            }
+            // show image
+            weakSelf.messagePhoto = image;
+            [weakSelf.activityIndicatorView stopAnimating];
+        }
+    });
+}
+
+/**
+ * 计算图片需要显示的大小，高度140计
+ */
+- (CGSize)needSizeForImage:(UIImage *) photo {
+    // 这里需要缩放后的size
+    CGSize photoSize ;
+    
+    CGFloat photoWidth = photo.size.width;
+    CGFloat photoHeight = photo.size.height;
+    CGFloat realWidth = photoWidth * 140 / photoHeight;
+    photoSize = CGSizeMake(realWidth, 140);
+    return photoSize;
 }
 
 - (void)setFrame:(CGRect)frame {
